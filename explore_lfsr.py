@@ -1,30 +1,12 @@
 from operator import xor
 import numpy as np
+import matplotlib.pyplot as plt
+import copy
 
 the_state = 5
 inlet1 = 0
 inlet2 = 1
 bit_list = [0]*16
-
-for shift in range(50):
-
-    new_value = xor((the_state & 1<<inlet1)>>inlet1, (the_state & 1<<inlet2)>>inlet2)
-
-    the_state >>= 1
-
-    if new_value:
-        appender = new_value<<15
-        the_state |= appender
-    else:
-        appender = ~(new_value<<15)
-        the_state &= appender
-
-    for shift_amt in range(15, -1, -1):
-        bit_value = (the_state & (1<<shift_amt))>>shift_amt
-        bit_list[15-shift_amt] = bit_value
-
-    print(bit_list)
-
 
 class shift_register:
 
@@ -49,25 +31,19 @@ class shift_register:
     def XOR(self, tap1, tap2):
         return (int(self.state[self.length - 1 - tap1]) ^ int(self.state[self.length - 1 - tap2]))
 
-sr1 = shift_register(length=18)
-sr1.input(8, 1)
-sr1.input(9, 1)
-for iteration in range(10):
+register_length = 20
+num_loops = 10
+num_subplots = register_length * num_loops
+sr1 = shift_register(length=register_length)
+sr1.input(10, 1)
+plt.figure(1)
+for loop in range(num_loops):
+    plt.subplot(num_loops, 1, loop+1)
+    x = copy.deepcopy(sr1.state)
+    plt.plot((np.concatenate((x, x))))
     for a_shift in range(sr1.length-1):
         sr1.shift()
         sr1.input(0, sr1.XOR(0, 1))
-    sr1.print_state()
-
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-X = np.linspace(-np.pi, np.pi, 256, endpoint=True)
-C, S = np.cos(X), np.sin(X)
-
-plt.xlim(-4.1, 4.1)
-plt.plot(X, C, color="purple", linewidth=2.0, linestyle=":")
-plt.plot(X, S, color="magenta", linewidth=0.5, linestyle=":")
 
 
 """
