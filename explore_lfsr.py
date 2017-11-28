@@ -32,15 +32,17 @@ class shift_register:
         return (int(self.state[self.length - 1 - tap1]) ^ int(self.state[self.length - 1 - tap2]))
 
 register_length = 20
-num_loops = 10
+num_loops = 30
 num_subplots = register_length * num_loops
 sr1 = shift_register(length=register_length)
 sr1.input(10, 1)
 plt.figure(1)
 for loop in range(num_loops):
-    plt.subplot(num_loops, 1, loop+1)
+    plt.subplot(num_loops, 2, (loop * 2)+1)
     x = copy.deepcopy(sr1.state)
     plt.plot((np.concatenate((x, x))))
+    plt.subplot(num_loops, 2, (loop*2)+2)
+    plt.plot(np.fft.fft(x))
     for a_shift in range(sr1.length-1):
         sr1.shift()
         sr1.input(0, sr1.XOR(0, 1))
