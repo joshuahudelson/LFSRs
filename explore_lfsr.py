@@ -32,25 +32,29 @@ class shift_register:
         return (int(self.state[self.length - 1 - tap1]) ^ int(self.state[self.length - 1 - tap2]))
 
 register_length = 20
-num_loops = 40
+num_loops = 16
+num_figs = 3
 concatenations = 4
 num_subplots = register_length * num_loops
 sr1 = shift_register(length=register_length)
 sr1.input(10, 1)
 plt.xlabel("Samples")
 plt.ylabel("Amplitude")
-for loop in range(num_loops):
-    plt.subplot(num_loops, 2, (loop * 2)+1)
-    x = copy.deepcopy(sr1.state)
-    x_con = np.concatenate((x, x))
-    x_con2 = np.concatenate((x_con, x_con))
-    plt.bar(np.arange(len(x_con2)), x_con2, width=1)
-    plt.subplot(num_loops, 2, (loop*2)+2)
-    plt.plot(np.fft.rfft(x_con2))
-    for a_shift in range(sr1.length-1):
-        sr1.shift()
-        sr1.input(0, sr1.XOR(0, 1))
 
+
+for fig in range(num_figs):
+    plt.figure(fig + 1)
+    for loop in range(num_loops):
+        plt.subplot(num_loops, 2, (loop * 2)+1)
+        x = copy.deepcopy(sr1.state)
+        x_con = np.concatenate((x, x))
+        x_con2 = np.concatenate((x_con, x_con))
+        plt.bar(np.arange(len(x_con2)), x_con2, width=1)
+        plt.subplot(num_loops, 2, (loop*2)+2)
+        plt.plot(np.fft.rfft(x_con2))
+        for a_shift in range(sr1.length-1):
+            sr1.shift()
+            sr1.input(0, sr1.XOR(0, 1))
 
 """
 # Create a new figure of size 8x6 points, using 100 dots per inch
